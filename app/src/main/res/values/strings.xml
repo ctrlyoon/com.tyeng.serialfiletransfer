@@ -4,13 +4,8 @@
 <!--    <string name="stop_button">서버중지</string>-->
 <!--    <string name="start_record">녹화시작</string>-->
 <!--    <string name="stop_record">녹화중지</string>-->
-    <string name="switch_camera_button">전환</string>
-    <string name="camera_controller">카메라</string>
-    <string name="switch_camera">후면</string>
-    <string name="switch_camera_front">전면</string>
-    <string name="switch_camera_back">후면</string>
-    <string name="flip_camera">반전</string>
-    <string name="controller">제어기</string>
+    <string name="send_command">명령전달</string>
+    <string name="send_greetings_mp3">인사말전달</string>
     <string name="started_please_connect">Started, please connect to:</string>
     <string name="not_started">Not started</string>
     <string name="start">Start</string>

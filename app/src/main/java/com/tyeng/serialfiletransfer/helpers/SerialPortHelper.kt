@@ -53,14 +53,14 @@ class SerialPortHelper(private val context: Context) {
         val manager = context.getSystemService(Context.USB_SERVICE) as UsbManager
         val availableDrivers = UsbSerialProber.getDefaultProber().findAllDrivers(manager)
         if (availableDrivers.isEmpty()) {
-            Log.i(TAG, "No available drivers found")
+            Log.i(TAG + Throwable().stackTrace[0].lineNumber, "No available drivers found")
             return null
         }
 
         val driver = availableDrivers[0]
         val connection = manager.openDevice(driver.device)
         if (connection == null) {
-            Log.i(TAG, "Connection is null")
+            Log.i(TAG + Throwable().stackTrace[0].lineNumber, "Connection is null")
             val mainActivityStartPendingIntent = PendingIntent.getActivity(
                 context, 0,
                 Intent(context, MainActivity::class.java),
@@ -79,26 +79,34 @@ class SerialPortHelper(private val context: Context) {
     @Throws(IOException::class)
     fun sendFile(serialPort: UsbSerialPort, file: File) {
         FileInputStream(file).use { fileInputStream ->
-            val buffer = ByteArray(4096)
+            val buffer = ByteArray(file.length().toInt())
             var bytesRead: Int
 
             // Send header: <file_name>|<file_size>
-            val header = "${file.name}|${file.length()}"
+            val header = "${file.name}|${file.length()}\n"
 
-            Log.i("FileTransferExample", "Sending header: $header")
-            serialPort.write(header.toByteArray(), 1000)
-            Log.i("FileTransferExample", "header: sent")
-            // Send file data
-            while (fileInputStream.read(buffer).also { bytesRead = it } != -1) {
-                serialPort.write(buffer, bytesRead)
+            Log.i(TAG + Throwable().stackTrace[0].lineNumber, "Sending header: $header")
+            Thread.sleep(1000) // Add delay before sending data
+            try {
+                serialPort.write(header.toByteArray(), 1000)
+            } catch (e: IOException) {
+                Log.e(TAG, "Error sending header: ${e.message}")
+                // You can show a message to the user or return from the function
+                return
             }
-
-            // Send end marker: <END_OF_FILE>
-            val endMarker = "<END_OF_FILE>"
-            serialPort.write(endMarker.toByteArray(), 1000)
-            serialPort.write("\n".toByteArray(), 1000)
-
-            Log.i("FileTransferExample", "File transfer completed")
+            Log.i(TAG + Throwable().stackTrace[0].lineNumber, "header: sent")
+            while (fileInputStream.read(buffer).also { bytesRead = it } != -1) {
+//                Thread.sleep(1000) // Add delay between chunks of data
+                try {
+                    serialPort.write(buffer, bytesRead)
+                } catch (e: IOException) {
+                    Log.e(TAG, "Error sending file data: ${e.message}")
+                    // You can show a message to the user or break the loop
+                    break
+                }
+            }
+            Log.i(TAG + Throwable().stackTrace[0].lineNumber, "File transfer completed")
         }
     }
+
 }

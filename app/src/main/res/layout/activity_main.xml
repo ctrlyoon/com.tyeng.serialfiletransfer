@@ -24,8 +24,9 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:layout_marginBottom="20dp"
-        android:onClick="sendCommandJson"
-        android:text="Send command.json" />
+        android:onClick="sendCommand"
+        android:text="@string/send_command"
+        android:enabled="false"/>
 
     <Button
         android:id="@+id/buttonGreetingsMp3"
@@ -34,7 +35,7 @@
         android:layout_below="@id/buttonCommandJson"
         android:layout_centerInParent="true"
         android:layout_marginBottom="20dp"
-        android:onClick="sendGreetingsMp3"
+        android:onClick="@string/send_greetings_mp3"
         android:text="Send greetings.mp3" />
 
 </RelativeLayout>
