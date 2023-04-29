@@ -1,0 +1,46 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'maven-publish'
+
+android {
+    compileSdkVersion 32
+
+    defaultConfig {
+        minSdkVersion 25
+        targetSdkVersion 32
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            consumerProguardFiles 'proguard-rules.pro'
+        }
+    }
+
+    publishing {
+        singleVariant("release")
+    }
+    namespace 'com.pedro.rtspserver'
+}
+
+afterEvaluate {
+    publishing {
+        publications {
+            // Creates a Maven publication called "release".
+            release(MavenPublication) {
+                // Applies the component for the release build variant.
+                from components.release
+
+                // You can then customize attributes of the publication as shown below.
+                groupId = "$library_group"
+                artifactId = "rtspserver"
+                version = "$version_name"
+            }
+        }
+    }
+}
+
+dependencies {
+    implementation project(':rtplibrary')
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+}

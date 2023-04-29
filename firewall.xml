@@ -1,0 +1,16 @@
+<ConfigRoot>
+<service id='926'>
+<id>vncServer</id>
+<rule id = '3020'>
+<direction>inbound</direction>
+<protocol>tcp</protocol>
+<porttype>src</porttype>
+<port>
+<begin>5900</begin>
+<end>5910</end>
+</port>
+</rule>
+<enabled>true</enabled>
+<required>false</required>
+</service>
+</ConfigRoot>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+    <TextureView
+        android:id="@+id/textureView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+    <TextView
+        android:id="@+id/textViewUrl"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:gravity="center"
+        android:textColor="@color/appColor"
+        android:textColorHint="@color/appColor"
+        android:textSize="24sp" />
+
+    <Button
+        android:id="@+id/buttonCommandJson"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_marginBottom="20dp"
+        android:onClick="sendCommandJson"
+        android:text="Send command.json" />
+
+    <Button
+        android:id="@+id/buttonGreetingsMp3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/buttonCommandJson"
+        android:layout_centerInParent="true"
+        android:layout_marginBottom="20dp"
+        android:onClick="sendGreetingsMp3"
+        android:text="Send greetings.mp3" />
+
+</RelativeLayout>
