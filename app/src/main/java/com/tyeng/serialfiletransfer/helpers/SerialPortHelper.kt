@@ -76,7 +76,6 @@ class SerialPortHelper(private val context: Context) {
         return usbSerialPort
     }
 
-
     @Throws(IOException::class)
     fun sendFile(serialPort: UsbSerialPort, file: File) {
         FileInputStream(file).use { fileInputStream ->
@@ -102,5 +101,4 @@ class SerialPortHelper(private val context: Context) {
             Log.i("FileTransferExample", "File transfer completed")
         }
     }
-
 }

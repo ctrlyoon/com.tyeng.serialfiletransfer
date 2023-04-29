@@ -12,6 +12,7 @@ import android.webkit.*
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.tyeng.serialfiletransfer.usbserial.driver.UsbSerialPort
 import com.tyeng.serialfiletransfer.usbserial.driver.UsbSerialProber
 import java.io.File
@@ -27,16 +28,10 @@ class MainActivity : AppCompatActivity() {
     private val BAUD_RATE = 115200
   }
 
-  fun listAttachedUsbDevices(context: Context) {
-    val usbManager = context.getSystemService(Context.USB_SERVICE) as UsbManager
-    val deviceList: HashMap<String, UsbDevice> = usbManager.deviceList
-
-    if (deviceList.isEmpty()) {
-      Log.i(TAG + Throwable().stackTrace[0].lineNumber,"No attached USB devices found.")
-    } else {
-      Log.i(TAG + Throwable().stackTrace[0].lineNumber, "List of attached USB devices:")
-      for ((_, device) in deviceList) {
-        Log.i(TAG + Throwable().stackTrace[0].lineNumber, "Device name: ${device.deviceName}, Product ID: ${device.productId}, Vendor ID: ${device.vendorId}")
+  private val connectionReceiver = object : BroadcastReceiver() {
+    override fun onReceive(context: Context?, intent: Intent?) {
+      if (intent?.action == SerialConnectionService.ACTION_CONNECTION_ESTABLISHED) {
+        // The serial connection is established, enable the buttons here
       }
     }
   }
@@ -44,6 +39,7 @@ class MainActivity : AppCompatActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_main)
+    LocalBroadcastManager.getInstance(this).registerReceiver(connectionReceiver, IntentFilter(SerialConnectionService.ACTION_CONNECTION_ESTABLISHED))
     Intent(this, SerialConnectionService::class.java).also { intent ->
       ContextCompat.startForegroundService(this, intent)
     }
@@ -58,44 +54,22 @@ class MainActivity : AppCompatActivity() {
       createCommandJsonFile(file)
     }
 
-    var message: String?
-    try {
-      // Find all available drivers from attached devices.
-      val manager = getSystemService(USB_SERVICE) as UsbManager
-      val availableDrivers = UsbSerialProber.getDefaultProber().findAllDrivers(manager)
-      if (availableDrivers.isEmpty()) {
-        message = getString(R.string.device_not_found)
-      } else {
-        // Open a connection to the first available driver.
-        val driver = availableDrivers[0]
-        val connection = manager.openDevice(driver.device)
-        if (connection == null) {
-          Log.i(TAG + Throwable().stackTrace[0].lineNumber,"startSerial")
-          val mainActivityStartPendingIntent = PendingIntent.getActivity(this,0,Intent(this, MainActivity::class.java), PendingIntent.FLAG_IMMUTABLE)
-          manager.requestPermission(driver.device, mainActivityStartPendingIntent)
-          message = "connection is null"
-        } else {
-          Log.i(TAG + Throwable().stackTrace[0].lineNumber,"startSerial connection")
-          val usbSerialPort = driver.ports[0] // Most devices have just one port (port 0)
-          usbSerialPort.open(connection)
-          usbSerialPort.setParameters(BAUD_RATE,8,UsbSerialPort.STOPBITS_1,UsbSerialPort.PARITY_NONE)
-          message = "sending file"
-          Log.i(TAG + Throwable().stackTrace[0].lineNumber,"filePath   :" + filePath)
-          sendFile(usbSerialPort, File(filePath))
-        }
-      }
-    } catch (ex: Exception) {
-      message = getString(R.string.error) + " " + ex.message
-      ex.printStackTrace()
-    }
-    if (message != null) {
-      val msg: String = message
-      Log.i(TAG + Throwable().stackTrace[0].lineNumber,"message   :" + message)
-      Handler(Looper.getMainLooper()).post {Toast.makeText(applicationContext,msg,Toast.LENGTH_SHORT).show()
-      }
+    // Retrieve the usbSerialPort instance from the SerialConnectionService
+    val usbSerialPort = SerialConnectionService.usbSerialPort
+
+    if (usbSerialPort != null) {
+      sendFile(usbSerialPort, File(filePath))
+    } else {
+      Toast.makeText(this, "Serial connection not established", Toast.LENGTH_SHORT).show()
     }
   }
 
+
+
+  override fun onDestroy() {
+    super.onDestroy()
+    LocalBroadcastManager.getInstance(this).unregisterReceiver(connectionReceiver)
+  }
 
   fun sendGreetingsMp3(view: View) {
     // Add your code to send greetings.mp3 here
@@ -114,29 +88,4 @@ class MainActivity : AppCompatActivity() {
     }
   }
 
-  @Throws(IOException::class)
-  private fun sendFile(serialPort: UsbSerialPort, file: File) {
-    FileInputStream(file).use { fileInputStream ->
-      val buffer = ByteArray(4096)
-      var bytesRead: Int
-
-      // Send header: <file_name>|<file_size>
-      val header = "${file.name}|${file.length()}"
-
-      Log.i(TAG + Throwable().stackTrace[0].lineNumber, "Sending header: $header")
-      serialPort.write(header.toByteArray(), 1000)
-      Log.i(TAG + Throwable().stackTrace[0].lineNumber, "header: sent")
-      // Send file data
-      while (fileInputStream.read(buffer).also { bytesRead = it } != -1) {
-        serialPort.write(buffer, bytesRead)
-      }
-
-      // Send end marker: <END_OF_FILE>
-      val endMarker = "<END_OF_FILE>"
-      serialPort.write(endMarker.toByteArray(), 1000)
-      serialPort.write("\n".toByteArray(), 1000)
-
-      Log.i(TAG + Throwable().stackTrace[0].lineNumber, "File transfer completed")
-    }
-  }
 }
