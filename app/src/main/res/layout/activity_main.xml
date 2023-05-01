@@ -4,20 +4,79 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
-    <TextureView
-        android:id="@+id/textureView"
+    <EditText
+        android:id="@+id/editTextGreetings"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-    <TextView
-        android:id="@+id/textViewUrl"
+        android:layout_height="48dp"
+        android:layout_margin="20dp"
+        android:hint="@string/make_your_greetings"
+        android:textColor="@color/colorPrimary"
+        android:textColorHint="@color/colorPrimary"
+        android:textSize="12sp" />
+    <Button
+        android:id="@+id/buttonWriteGreetings"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_below="@id/editTextGreetings"
+        android:layout_marginBottom="20dp"
+        android:onClick="makeGreetings"
+        android:text="@string/make_greetings"/>
+    <LinearLayout
+        android:id="@+id/linearLayoutCommandAction"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="20dp"
-        android:gravity="center"
-        android:textColor="@color/appColor"
-        android:textColorHint="@color/appColor"
-        android:textSize="24sp" />
-
+        android:layout_above="@id/buttonCommandJson"
+        android:layout_marginBottom="5dp"
+        android:orientation="vertical"
+        android:weightSum="4">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="2">
+            <TextView
+                android:id="@+id/textViewCommand"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Command:"
+                android:textAlignment="center"
+                android:textColor="@color/colorPrimaryDark" />
+            <EditText
+                android:id="@+id/editTextCommand"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textAlignment="center"
+                android:textColor="@color/colorPrimary"
+                android:textColorHint="@color/colorPrimary"
+                android:textSize="16sp" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="2">
+            <TextView
+                android:id="@+id/textViewAction"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Action:"
+                android:textAlignment="center"
+                android:textColor="@color/colorPrimaryDark" />
+            <EditText
+                android:id="@+id/editTextAction"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textAlignment="center"
+                android:textColor="@color/colorPrimary"
+                android:textColorHint="@color/colorPrimary"
+                android:textSize="16sp" />
+        </LinearLayout>
+    </LinearLayout>
     <Button
         android:id="@+id/buttonCommandJson"
         android:layout_width="wrap_content"
@@ -27,15 +86,13 @@
         android:onClick="sendCommand"
         android:text="@string/send_command"
         android:enabled="false"/>
-
     <Button
-        android:id="@+id/buttonGreetingsMp3"
+        android:id="@+id/sendGreetingsWav"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/buttonCommandJson"
         android:layout_centerInParent="true"
         android:layout_marginBottom="20dp"
-        android:onClick="@string/send_greetings_mp3"
-        android:text="Send greetings.mp3" />
-
+        android:onClick="sendGreetingsMp3"
+        android:text="@string/send_greetings_mp3" />
 </RelativeLayout>

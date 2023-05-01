@@ -9,10 +9,11 @@ android {
 
     defaultConfig {
         applicationId "com.tyeng.serialfiletransfer"
-        minSdkVersion 25
+        minSdkVersion 23
         targetSdkVersion 33
         versionCode version_code
         versionName version_name
+        resConfigs "en", "ko", "zh"
     }
     buildTypes {
         release {

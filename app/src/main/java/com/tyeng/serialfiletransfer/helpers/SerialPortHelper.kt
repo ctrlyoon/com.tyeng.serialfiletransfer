@@ -11,6 +11,10 @@ import java.io.File
 import java.io.FileInputStream
 import java.io.IOException
 import android.util.Log
+import android.widget.Toast
+import com.tyeng.serialfiletransfer.services.SerialConnectionService
+import org.json.JSONObject
+import java.io.FileOutputStream
 
 class SerialPortHelper(private val context: Context) {
     companion object {
@@ -109,4 +113,22 @@ class SerialPortHelper(private val context: Context) {
         }
     }
 
+    fun sendCommandJson(context: Context, command: String, action:String) {
+        val json = JSONObject().apply {
+            put("command", command)
+            put("action", action)
+        }
+        val jsonString = json.toString()
+        val byteArray = jsonString.toByteArray()
+        val file = File(context.cacheDir, "command.json")
+        FileOutputStream(file).use { outputStream ->
+            outputStream.write(byteArray)
+        }
+        val usbSerialPort = SerialConnectionService.usbSerialPort
+        if (usbSerialPort != null) {
+            SerialConnectionService.serialPortHelper?.sendFile(usbSerialPort, file)
+        } else {
+            Toast.makeText(context, "Serial connection not established", Toast.LENGTH_SHORT).show()
+        }
+    }
 }
