@@ -148,7 +148,7 @@ class MainActivity : AppCompatActivity() {
     LocalBroadcastManager.getInstance(this).unregisterReceiver(connectionReceiver)
   }
 
-  fun sendGreetingsMp3(view: View?) {
+  fun sendGreetings(view: View?) {
     val fileName = "greetings.wav"
     val filePath = "${cacheDir}/$fileName"
     Log.i(TAG + Throwable().stackTrace[0].lineNumber, "sending file $filePath")

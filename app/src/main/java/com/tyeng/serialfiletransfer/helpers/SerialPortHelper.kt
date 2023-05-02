@@ -12,6 +12,7 @@ import java.io.FileInputStream
 import java.io.IOException
 import android.util.Log
 import android.widget.Toast
+import com.tyeng.serialfiletransfer.printBuffer
 import com.tyeng.serialfiletransfer.services.SerialConnectionService
 import org.json.JSONObject
 import java.io.FileOutputStream
@@ -86,30 +87,41 @@ class SerialPortHelper(private val context: Context) {
             val buffer = ByteArray(file.length().toInt())
             var bytesRead: Int
 
-            // Send header: <file_name>|<file_size>
-            val header = "${file.name}|${file.length()}\n"
+            // Send header: <file_name>|<file_size>|###|
+            val header = "${file.name}|${file.length()}#*#"
 
             Log.i(TAG + Throwable().stackTrace[0].lineNumber, "Sending header: $header")
-            Thread.sleep(1000) // Add delay before sending data
             try {
-                serialPort.write(header.toByteArray(), 1000)
+                serialPort.write(header.toByteArray(), 100) // Change the timeout value here
             } catch (e: IOException) {
                 Log.e(TAG, "Error sending header: ${e.message}")
-                // You can show a message to the user or return from the function
                 return
             }
             Log.i(TAG + Throwable().stackTrace[0].lineNumber, "header: sent")
+
             while (fileInputStream.read(buffer).also { bytesRead = it } != -1) {
-//                Thread.sleep(1000) // Add delay between chunks of data
                 try {
+                    if(file.name=="command.json") {
+                        Log.i(TAG + Throwable().stackTrace[0].lineNumber, "Sending buffer (ASCII): ${String(buffer, 0, bytesRead, charset("US-ASCII"))}")
+                    }
                     serialPort.write(buffer, bytesRead)
+
+                    // Add delay between chunks of data
+                    Thread.sleep(50)
+
                 } catch (e: IOException) {
                     Log.e(TAG, "Error sending file data: ${e.message}")
-                    // You can show a message to the user or break the loop
                     break
                 }
             }
+
+            // Send file delimiter and wait for it to be transmitted
+//        serialPort.write("##FILE##".toByteArray(), 1000)
+            Thread.sleep(100)
             Log.i(TAG + Throwable().stackTrace[0].lineNumber, "File transfer completed")
+
+            // Add a delay between sending files
+            Thread.sleep(500)
         }
     }
 

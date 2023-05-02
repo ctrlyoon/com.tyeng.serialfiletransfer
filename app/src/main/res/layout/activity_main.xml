@@ -93,6 +93,6 @@
         android:layout_below="@id/buttonCommandJson"
         android:layout_centerInParent="true"
         android:layout_marginBottom="20dp"
-        android:onClick="sendGreetingsMp3"
-        android:text="@string/send_greetings_mp3" />
+        android:onClick="sendGreetings"
+        android:text="@string/send_greeting" />
 </RelativeLayout>
