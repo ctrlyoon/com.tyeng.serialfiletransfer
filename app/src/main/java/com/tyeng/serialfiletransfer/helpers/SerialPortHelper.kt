@@ -4,6 +4,9 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.hardware.usb.UsbManager
+import android.media.MediaPlayer
+import android.media.MediaRecorder
+import android.media.audiofx.Visualizer
 import com.tyeng.serialfiletransfer.MainActivity
 import com.tyeng.serialfiletransfer.usbserial.driver.UsbSerialPort
 import com.tyeng.serialfiletransfer.usbserial.driver.UsbSerialProber
@@ -14,6 +17,8 @@ import android.util.Log
 import android.widget.Toast
 import com.tyeng.serialfiletransfer.printBuffer
 import com.tyeng.serialfiletransfer.services.SerialConnectionService
+import com.tyeng.serialfiletransfer.services.SerialConnectionService.Companion.usbSerialPort
+import kotlinx.coroutines.*
 import org.json.JSONObject
 import java.io.FileOutputStream
 
@@ -92,7 +97,11 @@ class SerialPortHelper(private val context: Context) {
 
             Log.i(TAG + Throwable().stackTrace[0].lineNumber, "Sending header: $header")
             try {
-                serialPort.write(header.toByteArray(), 100) // Change the timeout value here
+                writeAsync(header.toByteArray(), 200) { exception ->
+                    if (exception != null) {
+                    } else {
+                    }
+                }
             } catch (e: IOException) {
                 Log.e(TAG, "Error sending header: ${e.message}")
                 return
@@ -104,9 +113,11 @@ class SerialPortHelper(private val context: Context) {
                     if(file.name=="command.json") {
                         Log.i(TAG + Throwable().stackTrace[0].lineNumber, "Sending buffer (ASCII): ${String(buffer, 0, bytesRead, charset("US-ASCII"))}")
                     }
-                    serialPort.write(buffer, bytesRead)
-
-                    // Add delay between chunks of data
+                    writeAsync(buffer, 200) { exception ->
+                        if (exception != null) {
+                        } else {
+                        }
+                    }
                     Thread.sleep(50)
 
                 } catch (e: IOException) {
@@ -143,4 +154,92 @@ class SerialPortHelper(private val context: Context) {
             Toast.makeText(context, "Serial connection not established", Toast.LENGTH_SHORT).show()
         }
     }
+
+    private val scope = CoroutineScope(Dispatchers.Main + Job())
+
+    fun writeAsync(data: ByteArray, timeout: Int, onCompletion: (exception: Exception?) -> Unit) {
+        scope.launch {
+            val exception = withContext(Dispatchers.IO) {
+                try {
+                    usbSerialPort?.write(data, timeout)
+                    null
+                } catch (e: IOException) {
+                    e
+                }
+            }
+            onCompletion(exception)
+        }
+    }
+
+    private var mediaRecorder: MediaRecorder? = null
+    private var mediaPlayer: MediaPlayer? = null
+    private var isRecording = false
+    private var silencePeriods = 0
+    private val silenceThreshold = 300 // Adjust this value based on your desired silence threshold
+
+    fun processCommandData(command: String, action: String) {
+        when (command) {
+            "1", "2", "3", "4", "5", "6", "7", "8", "charge" -> {
+                Log.i(TAG, "Turning ${if (action == "on") "on" else "off"} port $command")
+                // TODO: Implement TYUtils.runCommand() in Kotlin
+            }
+            "record" -> {
+                val outputFile = File(context.cacheDir, "${action}.wav")
+                mediaRecorder = MediaRecorder().apply {
+                    setAudioSource(MediaRecorder.AudioSource.MIC)
+                    setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP)
+                    setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB)
+                    setOutputFile(outputFile.absolutePath)
+                }
+                try {
+                    mediaRecorder?.prepare()
+                    mediaRecorder?.start()
+                    Log.i(TAG, "Recording $action with silence detection")
+
+                    // Start monitoring the amplitude
+                    isRecording = true
+                    scope.launch {
+                        while (isRecording) {
+                            withContext(Dispatchers.IO) {
+                                val maxAmplitude = mediaRecorder?.maxAmplitude ?: 0
+                                if (shouldStopRecording(maxAmplitude)) {
+                                    processCommandData("stopRecord", "")
+                                }
+                            }
+                            delay(100) // Adjust the delay as needed
+                        }
+                    }
+                } catch (e: IOException) {
+                    Log.e(TAG, "Error preparing or starting the recording: ${e.message}")
+                }
+            }
+            "play" -> {
+                val inputFile = File(context.cacheDir, "${action}.wav")
+                mediaPlayer = MediaPlayer().apply {
+                    setDataSource(inputFile.absolutePath)
+                    prepare()
+                    start()
+                    setOnCompletionListener {
+                        it.release()
+                    }
+                }
+                Log.i(TAG, "Playing $action")
+            }
+            else -> {
+                Log.i(TAG, "Invalid command $command")
+            }
+        }
+    }
+    private fun shouldStopRecording(amplitude: Int): Boolean {
+        if (amplitude < silenceThreshold) {
+            silencePeriods++
+            if (silencePeriods >= 10) { // 10 * 100 ms = 1 second
+                return true
+            }
+        } else {
+            silencePeriods = 0
+        }
+        return false
+    }
+
 }
