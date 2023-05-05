@@ -1,0 +1,21 @@
+<resources>
+	<string name="app_name">TYEng 远程语音开关</string>
+	<string name="send_command">发送命令</string>
+	<string name="send_greeting">发送问候文件</string>
+	<string name="make_greetings">制作问候语</string>
+	<string name="make_your_greetings">请添加问候语</string>
+	<string name="default_greeting">您好。这里是T.Y.E.n.g。请告诉我您的命令。</string>
+	<string name="port_not_open_error">端口设置失败</string>
+	<string name="started">已启动</string>
+	<string name="device_not_found">错误：未找到USB设备</string>
+	<string name="error">错误：</string>
+	<string name="stopped">已停止</string>
+	<string name="serial_connected">串行端口已连接</string>
+	<string name="serial_reconnected">串行端口已重新连接</string>
+	<string name="already_started">应用程序已经启动</string>
+	<string name="serial_already_running">串行服务已启动</string>
+	<string name="tcp_already_running">TCP服务已启动</string>
+	<string name="close_app">是否要关闭应用程序？</string>
+	<string name="yes">是</string>
+	<string name="no">否</string>
+</resources>

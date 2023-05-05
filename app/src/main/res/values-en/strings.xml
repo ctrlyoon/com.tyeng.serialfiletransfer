@@ -1,0 +1,22 @@
+
+<resources>
+	<string name="app_name">TYEng Remote Voice Switch</string>
+	<string name="send_command">Send Command</string>
+	<string name="send_greeting">Send Greetings File</string>
+	<string name="make_greetings">Make Greetings</string>
+	<string name="make_your_greetings">Enter your greetings</string>
+	<string name="default_greeting">Hello, this is TYEng. Please give me a command.</string>
+	<string name="port_not_open_error">Port configuration failed</string>
+	<string name="started">Started</string>
+	<string name="device_not_found">Error: USB device not found</string>
+	<string name="error">Error:</string>
+	<string name="stopped">Stopped</string>
+	<string name="serial_connected">Serial port connected</string>
+	<string name="serial_reconnected">Serial port reconnected</string>
+	<string name="already_started">The app is already started</string>
+	<string name="serial_already_running">Serial service is already started</string>
+	<string name="tcp_already_running">TCP service is already started</string>
+	<string name="close_app">Do you want to close the app?</string>
+	<string name="yes">Yes</string>
+	<string name="no">No</string>
+</resources>
