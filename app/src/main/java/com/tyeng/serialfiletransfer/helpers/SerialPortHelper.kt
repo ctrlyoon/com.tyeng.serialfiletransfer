@@ -46,7 +46,7 @@ class SerialPortHelper(private val context: Context) {
                         onDataReceived(receivedData)
                     }
                 } catch (e: IOException) {
-                    e.printStackTrace()
+//                    e.printStackTrace()
                 }
             }
         }
@@ -103,7 +103,7 @@ class SerialPortHelper(private val context: Context) {
                     }
                 }
             } catch (e: IOException) {
-                Log.e(TAG, "Error sending header: ${e.message}")
+                Log.e(TAG + Throwable().stackTrace[0].lineNumber, "Error sending header: ${e.message}")
                 return
             }
             Log.i(TAG + Throwable().stackTrace[0].lineNumber, "header: sent")
@@ -121,7 +121,7 @@ class SerialPortHelper(private val context: Context) {
                     Thread.sleep(50)
 
                 } catch (e: IOException) {
-                    Log.e(TAG, "Error sending file data: ${e.message}")
+                    Log.e(TAG + Throwable().stackTrace[0].lineNumber, "Error sending file data: ${e.message}")
                     break
                 }
             }
@@ -164,6 +164,7 @@ class SerialPortHelper(private val context: Context) {
                     usbSerialPort?.write(data, timeout)
                     null
                 } catch (e: IOException) {
+                    Log.e(TAG + Throwable().stackTrace[0].lineNumber, "Error writing data: ${e.message}")
                     e
                 }
             }
@@ -180,7 +181,7 @@ class SerialPortHelper(private val context: Context) {
     fun processCommandData(command: String, action: String) {
         when (command) {
             "1", "2", "3", "4", "5", "6", "7", "8", "charge" -> {
-                Log.i(TAG, "Turning ${if (action == "on") "on" else "off"} port $command")
+                Log.i(TAG + Throwable().stackTrace[0].lineNumber, "Turning ${if (action == "on") "on" else "off"} port $command")
                 // TODO: Implement TYUtils.runCommand() in Kotlin
             }
             "record" -> {
@@ -194,7 +195,7 @@ class SerialPortHelper(private val context: Context) {
                 try {
                     mediaRecorder?.prepare()
                     mediaRecorder?.start()
-                    Log.i(TAG, "Recording $action with silence detection")
+                    Log.i(TAG + Throwable().stackTrace[0].lineNumber, "Recording $action with silence detection")
 
                     // Start monitoring the amplitude
                     isRecording = true
@@ -210,7 +211,7 @@ class SerialPortHelper(private val context: Context) {
                         }
                     }
                 } catch (e: IOException) {
-                    Log.e(TAG, "Error preparing or starting the recording: ${e.message}")
+                    Log.e(TAG + Throwable().stackTrace[0].lineNumber, "Error preparing or starting the recording: ${e.message}")
                 }
             }
             "play" -> {
@@ -223,10 +224,10 @@ class SerialPortHelper(private val context: Context) {
                         it.release()
                     }
                 }
-                Log.i(TAG, "Playing $action")
+                Log.i(TAG + Throwable().stackTrace[0].lineNumber, "Playing $action")
             }
             else -> {
-                Log.i(TAG, "Invalid command $command")
+                Log.i(TAG + Throwable().stackTrace[0].lineNumber, "Invalid command $command")
             }
         }
     }

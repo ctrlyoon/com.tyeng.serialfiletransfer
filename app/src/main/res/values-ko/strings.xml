@@ -2,6 +2,10 @@
     <string name="app_name">TYEng 원격 음성 스위치</string>
     <string name="send_command">명령전달</string>
     <string name="send_greeting">인사말파일전달</string>
+    <string name="record_command">명령녹음</string>
+    <string name="play_command">명령출력</string>
+    <string name="record_confirm">확인녹음</string>
+    <string name="play_confirm">확인출력</string>
     <string name="make_greetings">인사말만들기</string>
     <string name="make_your_greetings">인사말을 넣어주세요</string>
     <string name="default_greeting">안녕하세요. 티와이이엔지입니다. 명령을 말씀해주세요</string>

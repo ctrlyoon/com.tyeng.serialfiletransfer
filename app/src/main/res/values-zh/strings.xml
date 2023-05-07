@@ -2,6 +2,10 @@
 	<string name="app_name">TYEng 远程语音开关</string>
 	<string name="send_command">发送命令</string>
 	<string name="send_greeting">发送问候文件</string>
+	<string name="record_command">录制命令</string>
+	<string name="play_command">播放命令</string>
+	<string name="record_confirm">确认录音</string>
+	<string name="play_confirm">确认播放</string>
 	<string name="make_greetings">制作问候语</string>
 	<string name="make_your_greetings">请添加问候语</string>
 	<string name="default_greeting">您好。这里是T.Y.E.n.g。请告诉我您的命令。</string>

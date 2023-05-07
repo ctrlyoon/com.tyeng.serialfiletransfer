@@ -43,7 +43,6 @@ class SerialConnectionService : Service() {
         usbSerialPort?.let { port ->
             serialPortHelper!!.startListening(port) { receivedData ->
                 // Process the received data here
-                Log.i(TAG + Throwable().stackTrace[0].lineNumber, "Received data: ${String(receivedData)}")
                 receivedDataBuffer.append(String(receivedData))
                 val delimiterIndex = receivedDataBuffer.indexOf(jsonFileDelimiter)
 
@@ -63,6 +62,7 @@ class SerialConnectionService : Service() {
                         val commandData = JSONObject(String(jsonBytes))
                         val command = commandData.getString("command")
                         val action = commandData.getString("action")
+                        Log.i(TAG + Throwable().stackTrace[0].lineNumber, "Received data: ${String(receivedData)}")
                         serialPortHelper!!.processCommandData(command, action)
                     } else {
                         val savePath = File(cacheDir, fileName).absolutePath

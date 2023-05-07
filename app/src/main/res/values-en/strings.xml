@@ -1,8 +1,11 @@
-
 <resources>
 	<string name="app_name">TYEng Remote Voice Switch</string>
 	<string name="send_command">Send Command</string>
 	<string name="send_greeting">Send Greetings File</string>
+	<string name="record_command">Record Command</string>
+	<string name="play_command">Play Command</string>
+	<string name="record_confirm">Record Confirm</string>
+	<string name="play_confirm">Play Confirm</string>
 	<string name="make_greetings">Make Greetings</string>
 	<string name="make_your_greetings">Enter your greetings</string>
 	<string name="default_greeting">Hello, this is TYEng. Please give me a command.</string>

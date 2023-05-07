@@ -95,4 +95,45 @@
         android:layout_marginBottom="20dp"
         android:onClick="sendGreetings"
         android:text="@string/send_greeting" />
+    <LinearLayout
+        android:id="@+id/buttonContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:weightSum="4">
+
+        <Button
+            android:id="@+id/recordCommand"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:onClick="recordCommand"
+            android:text="@string/record_command" />
+
+        <Button
+            android:id="@+id/playCommand"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:onClick="playCommand"
+            android:text="@string/play_command" />
+
+        <Button
+            android:id="@+id/recordConfirm"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:onClick="recordConfirm"
+            android:text="@string/record_confirm" />
+
+        <Button
+            android:id="@+id/playConfirm"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:onClick="playConfirm"
+            android:text="@string/play_confirm" />
+    </LinearLayout>
 </RelativeLayout>

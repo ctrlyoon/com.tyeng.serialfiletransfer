@@ -8,7 +8,6 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.Build
 import android.os.Bundle
-import android.provider.Settings.Global.getString
 import android.speech.tts.TextToSpeech
 import android.text.Editable
 import android.text.TextWatcher
@@ -59,7 +58,7 @@ class MainActivity : AppCompatActivity() {
       ContextCompat.startForegroundService(this, intent)
     }
     createNotificationChannel()
-    tts = TextToSpeech(applicationContext, TextToSpeech.OnInitListener { status ->
+    tts = TextToSpeech(applicationContext, { status ->
       if (status != TextToSpeech.ERROR) {
         tts.language = Locale.KOREAN
         val fileName = "greetings"
@@ -192,15 +191,36 @@ class MainActivity : AppCompatActivity() {
     }
   }
 
-  private fun setLocale(lang: String) {
+  fun setLocale(lang: String) {
     val myLocale = Locale(lang)
     val res = resources
     val dm = res.displayMetrics
     val conf = res.configuration
     conf.setLocale(myLocale)
     res.updateConfiguration(conf, dm)
-    greetingsSentence = getString(R.string.default_greeting)
-    editTextGreetings.setText(greetingsSentence)
+    MainActivity.greetingsSentence = getString(R.string.default_greeting)
+    editTextGreetings.setText(MainActivity.greetingsSentence)
   }
 
+  fun recordCommand(view: View) {
+    val command = editTextCommand.text.toString()
+    val action = editTextAction.text.toString()
+    SerialConnectionService.serialPortHelper?.sendCommandJson(this, "record","command")
+  }
+
+  fun playCommand(view: View) {
+    val command = editTextCommand.text.toString()
+    val action = editTextAction.text.toString()
+    SerialConnectionService.serialPortHelper?.sendCommandJson(this, "play","command")
+  }
+  fun recordConfirm(view: View) {
+    val command = editTextCommand.text.toString()
+    val action = editTextAction.text.toString()
+    SerialConnectionService.serialPortHelper?.sendCommandJson(this, "record","confirm")
+  }
+  fun playConfirm(view: View) {
+    val command = editTextCommand.text.toString()
+    val action = editTextAction.text.toString()
+    SerialConnectionService.serialPortHelper?.sendCommandJson(this, "play","confirm")
+  }
 }
